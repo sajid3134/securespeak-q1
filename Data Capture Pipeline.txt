@@ -1,0 +1,13 @@
+Data Capture Pipeline
+
+Raw Traffic -> Openwrt -> TCPDump -> SSH Tunnel -> Raspi -> Preprocess -> Model Eval -> Notification
+
+Using TCPdump and Openwrt flashed router we can reroute the traffics to raspi for analysis. But most router doesn't have Openwrt flashed making our approach harder to implement in deployment. The passive capture every 5 sec interval give us tls encrypted traffic which can't be inspected reliably. Swif.ai (2026) report that encrypted IoT threats rose 93% in 2024 with most outbound traffic hidden inside TLS sessions that home routers cannot inspect. Also polling on traffic capture can bottleneck the analysis because of the raspis limited processing power. In case of DDoS it can overwhelm our hardware. Then cold start false analysis can occur as the first initialization steps doesn't reflect real world scenarios, give use false positive on each step.
+
+Weakness:
+
+The RT-IoT2022 dataset contains only 26 labelled BruteForce samples, a number insufficient for reliable minority-class learning. The paper honestly acknowledges that performance on this class is "empirically uncertain," yet offers no corrective measure. As Elasaad et al. (AegisGuard, 2025) demonstrate, adaptive sampling pipelines combining SMOTE, SMOTE-ENN, and ADASYN can dramatically reduce the impact of extreme class imbalance in IoT IDS. The absence of any synthetic augmentation strategy for rare attack classes is the most actionable training-side weakness in the paper.
+
+IP Geolocation can be spoofed or can give us false location which can effect our BTV model with prayer times and CWF. If cliet using VPN or ISP isn't providing real ip, this might make the model go haywire. 
+
+Also we didnt test the max capacity to analyze the traffic within 5 sec. if the too many request it may fail over time.
